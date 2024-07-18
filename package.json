@@ -17,6 +17,8 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "^6.0.2",
+    "@wix/sdk": "^1.12.6",
+    "@wix/stores": "^1.0.167",
     "expo": "~51.0.20",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.8",

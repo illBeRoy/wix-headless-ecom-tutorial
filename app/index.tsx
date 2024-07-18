@@ -1,38 +1,40 @@
+import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native';
+import { createClient, OAuthStrategy } from '@wix/sdk';
+import * as stores from '@wix/stores';
 import { ProductItemProps } from '@/components/ProductItem';
 import { ProductsList } from '@/components/ProductsList';
 
 export default function HomePage() {
+  const [products, setProducts] = useState<ProductItemProps[]>([]);
+
+  useEffect(() => {
+    async function fetchProductsFromWix() {
+      const wix = createClient({
+        auth: OAuthStrategy({
+          clientId: 'YOUR CLIENT ID HERE',
+        }),
+        modules: { stores },
+      });
+
+      const response = await wix.stores.products.queryProducts().find();
+
+      setProducts(
+        response.items.map((item) => ({
+          title: item.name!,
+          description: item.description!.replace(/<[^>]*>/g, ''),
+          price: item.priceData!.formatted!.price!,
+          image: item.media!.mainMedia!.image!.url!,
+        })),
+      );
+    }
+
+    fetchProductsFromWix();
+  }, []);
+
   return (
     <SafeAreaView>
-      <ProductsList products={fakeProducts} />
+      <ProductsList products={products} />
     </SafeAreaView>
   );
 }
-
-const fakeProducts: ProductItemProps[] = [
-  {
-    title: 'Empty!',
-    description: 'Here is a kitty instead',
-    price: '50.00$',
-    image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
-  },
-  {
-    title: 'Empty!',
-    description: 'Here is a kitty instead',
-    price: '50.00$',
-    image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
-  },
-  {
-    title: 'Empty!',
-    description: 'Here is a kitty instead',
-    price: '50.00$',
-    image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
-  },
-  {
-    title: 'Empty!',
-    description: 'Here is a kitty instead',
-    price: '50.00$',
-    image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
-  },
-];
